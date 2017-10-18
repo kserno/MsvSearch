@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 public abstract class BaseMaterialSearchView extends FrameLayout implements View.OnClickListener, View.OnFocusChangeListener, TextView.OnEditorActionListener, TextWatcher {
 
-    final static String TAG = "BMSV";
+    public static final String TAG = BaseMaterialSearchView.class.getSimpleName();
 
     protected EditText mETSearchText;
     protected ImageButton mBtBack;
@@ -261,7 +261,7 @@ public abstract class BaseMaterialSearchView extends FrameLayout implements View
     }
 
     public void showKeyboard(View view) {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1 && view.hasFocus()) {
+        if (view.hasFocus()) {
             view.clearFocus();
         }
         view.requestFocus();

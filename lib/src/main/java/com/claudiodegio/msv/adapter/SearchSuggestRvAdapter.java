@@ -2,6 +2,7 @@ package com.claudiodegio.msv.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +17,14 @@ import com.claudiodegio.msv.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchSuggestRvAdapter extends RecyclerView.Adapter<SearchSuggestRvAdapter.ViewHolder> implements Filterable {
+public class SearchSuggestRvAdapter extends RecyclerView.Adapter<SearchSuggestRvAdapter.SuggestionViewHolder> implements Filterable {
 
 
     private Context mCtx;
     private List<String> mSuggestions;
     private List<String> mSuggestionsFiltered;
+
+    private String mConstraint;
 
     private LayoutInflater mInflater;
     private Boolean isContain;
@@ -39,15 +42,27 @@ public class SearchSuggestRvAdapter extends RecyclerView.Adapter<SearchSuggestRv
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SuggestionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.msv_item_suggestion, parent, false);
-        return new ViewHolder(view);
+        return new SuggestionViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(SuggestionViewHolder holder, int position) {
         String suggestion = mSuggestionsFiltered.get(position);
-        holder.mTextView.setText(suggestion);
+        int index = suggestion.toLowerCase().indexOf(mConstraint.toLowerCase());
+
+        if (index == -1)
+            return;
+        holder.mTextView.setText(
+                Html.fromHtml(String.format(
+                        "%s<b>%s</b>%s",
+                        suggestion.substring(0, index),
+                        suggestion.substring(index, index + mConstraint.length()),
+                        suggestion.substring(index + mConstraint.length())
+                )),
+                TextView.BufferType.SPANNABLE
+        );
     }
 
     @Override
@@ -64,7 +79,7 @@ public class SearchSuggestRvAdapter extends RecyclerView.Adapter<SearchSuggestRv
 
     @Override
     public Filter getFilter() {
-        Filter filter = new Filter() {
+        return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
@@ -95,20 +110,20 @@ public class SearchSuggestRvAdapter extends RecyclerView.Adapter<SearchSuggestRv
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
+                mConstraint = constraint.toString();
                 if (results.values != null) {
                     mSuggestionsFiltered = (ArrayList<String>) results.values;
                     notifyDataSetChanged();
                 }
             }
         };
-        return filter;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class SuggestionViewHolder extends RecyclerView.ViewHolder {
 
         public TextView mTextView;
 
-        public ViewHolder(View itemView) {
+        public SuggestionViewHolder(View itemView) {
             super(itemView);
             mTextView = (TextView) itemView.findViewById(R.id.suggestion_text);
         }

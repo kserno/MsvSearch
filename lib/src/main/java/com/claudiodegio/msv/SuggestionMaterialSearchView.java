@@ -40,10 +40,11 @@ public class SuggestionMaterialSearchView extends BaseMaterialSearchView impleme
 
 
     private void initView(){
-        mRvSuggestion = (RecyclerView) findViewById(R.id.rv_suggestions);
+        mRvSuggestion = findViewById(R.id.rv_suggestions);
         mVOverlay = findViewById(R.id.v_overlay);
-        mVOverlay.setOnClickListener(this);
+
         mRvSuggestion.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), this));
+        mVOverlay.setOnClickListener(this);
 
         if (hideShadow) {
             mVOverlay.setVisibility(GONE);

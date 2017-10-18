@@ -6,8 +6,6 @@ package com.claudiodegio.msv.model;
 
 public class Section extends BaseElement {
 
-
-
     public Section(String name) {
         super(name);
     }
